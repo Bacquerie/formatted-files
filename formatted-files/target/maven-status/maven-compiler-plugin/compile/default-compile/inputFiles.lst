@@ -1,0 +1,14 @@
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/FormattedWriter.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/DelimiterSeparatedWriter.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/processors/DateParser.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/FormattedProcessor.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/DelimiterSeparatedReader.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/FormattedReader.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/FieldParser.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/processors/ReadPreprocessor.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/formatted/model/annotations/FormattedDate.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/processors/ReadPostprocessor.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/FFUtils.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/formatted/processors/ParsingUtils.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/files/BatchedLineIterator.java
+/home/alejandro/Desktop/data/workspace/eclipse/bw/formatted-files/src/main/java/org/bff/formatted/model/annotations/FormattedField.java

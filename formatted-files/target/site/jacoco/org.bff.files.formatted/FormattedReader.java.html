@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FormattedReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">formatted-files</a> &gt; <a href="index.source.html" class="el_package">org.bff.files.formatted</a> &gt; <span class="el_source">FormattedReader.java</span></div><h1>FormattedReader.java</h1><pre class="source lang-java linenums">package org.bff.files.formatted;
+
+import java.util.stream.Stream;
+
+import org.bff.files.BatchedLineIterator;
+import org.bff.files.formatted.processors.ReadPostprocessor;
+import org.bff.files.formatted.processors.ReadPreprocessor;
+
+public abstract class FormattedReader &lt;Type&gt; extends FormattedProcessor &lt;Type&gt;
+{
+	protected final BatchedLineIterator lineIterator;
+	protected final ReadPreprocessor preprocessor;
+	protected final ReadPostprocessor postprocessor;
+	
+	/// CONSTRUCTORS
+	
+	protected FormattedReader (
+		final Class &lt;?&gt; klass,
+		final BatchedLineIterator lineIterator,
+		final ReadPreprocessor preprocessor,
+		final ReadPostprocessor postprocessor)
+	{
+<span class="nc" id="L23">		super (klass);</span>
+		
+<span class="nc" id="L25">		this.lineIterator = lineIterator;</span>
+<span class="nc" id="L26">		this.preprocessor = preprocessor;</span>
+<span class="nc" id="L27">		this.postprocessor = postprocessor;</span>
+<span class="nc" id="L28">	}</span>
+	
+	/// PUBLIC METHODS
+	
+	/** Force-closes the reader. **/
+	public void close ()
+	{
+<span class="nc" id="L35">		try { lineIterator.close (); }</span>
+		
+<span class="nc" id="L37">		catch (Exception e) {}</span>
+<span class="nc" id="L38">	}</span>
+	
+	/** &lt;code&gt;true&lt;/code&gt; if there are more lines to read. **/
+	public boolean hasNext ()
+	{
+<span class="nc" id="L43">		return lineIterator.hasNext ();</span>
+	}
+	
+	/** Reads the following batch of lines. **/
+	public Stream &lt;Type&gt; read ()
+	{
+<span class="nc" id="L49">		return lineIterator.read ().map (this::mapLine);</span>
+	}
+	
+	/** Skips the next &lt;code&gt;skipCount&lt;/code&gt; number of lines. **/
+	public void skip (int skipCount)
+	{
+<span class="nc" id="L55">		lineIterator.skip (skipCount);</span>
+<span class="nc" id="L56">	}</span>
+	
+	/// OVERRIDABLE METHODS
+	
+	protected abstract Type mapLine (final String line);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
