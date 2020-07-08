@@ -11,9 +11,9 @@ public class ParsingUtils
 {
 	public static Object parse (Field field, String data)
 	{
-		Class <?> klass = field.getType ();
+		final Class <?> klass = field.getType ();
 		
-		Function <String, Object> function = x -> x;
+		Function <String, Object> function;
 		
 		try
 		{

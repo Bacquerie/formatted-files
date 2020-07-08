@@ -11,11 +11,9 @@ import java.lang.annotation.Target;
 @Target (ElementType.FIELD)
 public @interface FormattedField
 {
-	public static enum Alignment { LEFT, RIGHT };
+	enum Alignment { LEFT, RIGHT }
 	
 	char filler () default ' ';
-	
-	String name () default "";
 	
 	int order ();
 	

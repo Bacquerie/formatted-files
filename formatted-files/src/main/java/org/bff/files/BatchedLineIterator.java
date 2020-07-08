@@ -17,7 +17,7 @@ import org.apache.commons.io.LineIterator;
  */
 public class BatchedLineIterator extends LineIterator
 {
-	/// PRIVATE FIELDS
+	///region PRIVATE FIELDS
 	
 	/**
 	 * Number of records to fetch in each read operation. 
@@ -28,21 +28,25 @@ public class BatchedLineIterator extends LineIterator
 	 * Maximum number of lines to read before closing.
 	 */
 	private int limit;
+
+	///endregion
 	
-	/// CONSTRUCTORS
+	///region CONSTRUCTORS
 	
 	/**
 	 * For use of the internal Builder.
 	 */
-	private BatchedLineIterator(Builder builder)
+	private BatchedLineIterator(final Builder builder)
 	{
 		super(builder.reader);
 		
 		this.batchSize = builder.batchSize;
 		this.limit = builder.limit;
 	}
+
+	///endregion
 	
-	/// PUBLIC API
+	///region PUBLIC METHODS: API
 	
 	/**
 	 * Reads and returns the next batch of text lines.
@@ -59,17 +63,20 @@ public class BatchedLineIterator extends LineIterator
 	{
 		if (count >= 1) read (count);
 	}
+
+	///endregion
 	
-	/// OVERRIDDEN METHODS
+	///region OVERRIDDEN METHODS
 	
 	@Override
-	protected boolean isValidLine (final String line)
+	protected boolean isValidLine (String line)
 	{
-		return !Objects.isNull (line) && !line.isBlank ();
+		return !Utils.isBlank (line);
 	}
+
+	///endregion
 	
-	
-	/// PRIVATE METHODS
+	///region PRIVATE METHODS
 	
 	/**
 	 * Decreases the number of maximum lines to read by one, if possible.
@@ -79,11 +86,11 @@ public class BatchedLineIterator extends LineIterator
 		try
 		{
 			if (!this.hasNext () || (limit <= 0)) return;
-			if (limit > 0) --limit;
+			--limit;
 			if (limit == 0) close ();
 		}
 		
-		catch (Exception e) { }
+		catch (Exception e) {  }
 	}
 	
 	/**
@@ -111,8 +118,10 @@ public class BatchedLineIterator extends LineIterator
 		
 		return lines.build ();
 	}
+
+	///endregion
 	
-	/// BUILDER
+	///region BUILDER
 	
 	/**
 	 * Helper method to create <code>BatchedReader</code> instances that reads lines from a
@@ -170,4 +179,6 @@ public class BatchedLineIterator extends LineIterator
 			return new BatchedLineIterator (this);
 		}
 	}
+
+	///endregion
 }

@@ -2,6 +2,7 @@ package org.bff.files.formatted.processors;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class DateParser
 		else
 		{
 			formats.add (field.value ());
-			formats.addAll (List.of (field.additionalFormats ()));
+			formats.addAll (Arrays.asList (field.additionalFormats ()));
 		}
 		
 		for (String format : formats)

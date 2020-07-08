@@ -10,7 +10,7 @@ import org.bff.formatted.model.annotations.FormattedField;
 
 public final class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 {
-	private char separator;
+	private final char separator;
 	
 	protected DelimiterSeparatedWriter(final Builder builder)
 	{
@@ -43,14 +43,14 @@ public final class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type
 	
 	/// BUILDER
 	
-	public static final Builder builder (final Class <?> klass)
+	public static Builder builder (final Class <?> klass)
 	{
 		return new Builder (klass);
 	}
 	
 	public static final class Builder
 	{
-		private Class <?> klass;
+		private final Class <?> klass;
 		private char separator = ',';
 		
 		private Builder(final Class <?> klass)

@@ -1,11 +1,8 @@
 package org.bff.files.formatted;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -26,7 +23,9 @@ public abstract class FormattedWriter <Type> extends FormattedProcessor <Type>
 	{
 		try
 		{
-			write (stream, new FileWriter (file, encoding));
+			OutputStreamWriter osw =new OutputStreamWriter (new FileOutputStream (file), encoding);
+
+			write (stream, osw);
 		}
 		
 		catch (Exception e) { }
@@ -34,7 +33,7 @@ public abstract class FormattedWriter <Type> extends FormattedProcessor <Type>
 	
 	public void writeToFile (final Stream <Type> stream, File file)
 	{
-		writeToFile (stream, file, Charset.forName ("UTF-8"));
+		writeToFile (stream, file, StandardCharsets.UTF_8);
 	}
 	
 	public String writeToString (final Stream <Type> stream)

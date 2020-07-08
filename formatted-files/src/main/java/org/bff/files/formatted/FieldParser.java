@@ -15,10 +15,8 @@ public class FieldParser
 			String preprocessed = reader.preprocessor.process (rawValue, formattedField.order ());
 			
 			Object processed = FormattedReader.process (field, preprocessed);
-			
-			Object posprocessed = reader.postprocessor.process (processed, formattedField.order ());
-			
-			return posprocessed;
+
+			return reader.postprocessor.process (processed, formattedField.order ());
 		}
 		
 		catch (Exception e) { return null; }

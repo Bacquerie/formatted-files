@@ -1,11 +1,6 @@
 package org.bff.files.formatted;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Objects;
@@ -27,12 +22,16 @@ import org.bff.formatted.model.annotations.FormattedField;
  */
 public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 {
+	///region FIELDS
+
 	/**
 	 * Internal representation of the delimiter character.
 	 */
 	private final Pattern pattern;
-	
-	/// CONSTRUCTORS
+
+	///endregion
+
+	///region CONSTRUCTORS
 	
 	/**
 	 * For use of the internal builder.
@@ -43,8 +42,10 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 		
 		this.pattern = builder.pattern;
 	}
+
+	///endregion
 	
-	/// OVERRIDDEN, PROTECTED METHODS
+	///region OVERRIDDEN METHODS
 	
 	@Override
 	@SuppressWarnings ("unchecked")
@@ -77,8 +78,10 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 		
 		catch (Exception e) { e.printStackTrace (); return null; }
 	}
+
+	///endregion
 	
-	/// BUILDER
+	///region BUILDER
 	
 	/**
 	 * Helper method to create a new batched reader that reads lines from a file.
@@ -86,7 +89,7 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 	public static Builder builder (final Class <?> klass, final File file, Charset encoding)
 		throws IOException
 	{
-		return builder (new FileReader (file, encoding), klass);
+		return builder (new InputStreamReader (new FileInputStream (file), encoding), klass);
 	}
 	
 	/**
@@ -120,10 +123,7 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 		private final BatchedLineIterator.Builder lineIteratorBuilder;
 		private BatchedLineIterator lineIterator;
 		
-		private int batchSize;
-		private int limit;
-		
-		private Class <?> klass;
+		private final Class <?> klass;
 		private ReadPreprocessor preprocessor = (x, i) -> x;
 		private ReadPostprocessor postprocessor = (x, i) -> x;
 		
@@ -190,14 +190,13 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader <Type>
 		
 		public DelimiterSeparatedReader <?> build () throws IOException
 		{
-			lineIterator = lineIteratorBuilder
-				.batchSize (batchSize)
-				.limit (limit)
-				.build ();
+			lineIterator = lineIteratorBuilder.build ();
 			
 			this.pattern = Pattern.compile (String.valueOf (separator), Pattern.LITERAL);
 			
 			return new DelimiterSeparatedReader <> (this);
 		}
 	}
+
+	///endregion
 }
