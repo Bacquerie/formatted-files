@@ -1,73 +1,102 @@
 package org.bff.files.formatted;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.bff.files.formatted.processors.ParsingUtils;
+import org.bff.files.utils.ParsingUtils;
+import org.bff.files.utils.FFUtils;
 import org.bff.formatted.model.annotations.FormattedField;
 
-public final class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
+public class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 {
+	///region FIELDS
+
+	/**
+	 * Character used as field delimiter.
+	 */
 	private final char separator;
-	
-	protected DelimiterSeparatedWriter(final Builder builder)
+
+	///endregion
+
+	///region CONSTRUCTORS
+
+	/**
+	 * For use of the internal Builder.
+	 */
+	protected DelimiterSeparatedWriter (final Builder <Type> builder)
 	{
 		super (builder.klass);
 		
 		this.separator = builder.separator;
 	}
-	
+
+	///endregion
+
+	///region OVERRIDDEN METHODS
+
 	@Override
 	protected String mapItem (final Type item)
 	{
-		final List <String> tokens = new ArrayList <> ();
+		final List <String> fields = new ArrayList <> ();
 		
-		for (Field field : formattedFields)
+		formattedFields.forEach (field ->
 		{
-			FormattedField formattedField = FFUtils.getFormattedField (field);
+			final FormattedField formattedField = FFUtils.getFormattedField (field);
 			
-			while (tokens.size () < (formattedField.order ())) tokens.add ("");
+			while (fields.size () < (formattedField.order () - 1))
+			{
+				fields.add ("");
+			}
 			
 			try
 			{
-				tokens.add (ParsingUtils.render (field, FieldUtils.readField (field, item, true)));
+				Object fieldValue = FieldUtils.readField (field, item, true);
+
+				fields.add (ParsingUtils.render (field, fieldValue));
 			}
 			
-			catch (Exception e) {}
-		}
+			catch (Exception e)
+			{
+				e.printStackTrace ();
+			}
+		});
 		
-		return String.join (String.valueOf (separator), tokens);
+		return String.join (String.valueOf (separator), fields);
+	}
+
+	///endregion
+
+	///region BUILDER
+	
+	public static <Type> Builder <Type> builder (final Class <Type> klass)
+	{
+		return new Builder <> (klass);
 	}
 	
-	/// BUILDER
-	
-	public static Builder builder (final Class <?> klass)
+	public static final class Builder <Type>
 	{
-		return new Builder (klass);
-	}
-	
-	public static final class Builder
-	{
-		private final Class <?> klass;
+		private final Class <Type> klass;
+
 		private char separator = ',';
 		
-		private Builder(final Class <?> klass)
+		private Builder (final Class <Type> klass)
 		{
 			this.klass = klass;
 		}
 		
-		public Builder separator (char separator)
+		public Builder <Type> separator (char separator)
 		{
 			if (separator != '\0') this.separator = separator;
 			
 			return this;
 		}
 		
-		public DelimiterSeparatedWriter <?> build ()
+		public DelimiterSeparatedWriter <Type> build ()
 		{
 			return new DelimiterSeparatedWriter <> (this);
 		}
 	}
+
+	///endregion
 }

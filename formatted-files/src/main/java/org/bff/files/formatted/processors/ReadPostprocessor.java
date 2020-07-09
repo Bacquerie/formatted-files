@@ -3,5 +3,9 @@ package org.bff.files.formatted.processors;
 @FunctionalInterface
 public interface ReadPostprocessor
 {
-	Object process (Object field, int position);
+	/**
+	 * Allows for additional transformation of <code>field</code> before being assigned to
+	 * the respective object field.
+	 */
+	Object process (final Object field, int position);
 }
