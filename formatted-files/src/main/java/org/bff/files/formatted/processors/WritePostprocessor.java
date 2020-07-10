@@ -5,7 +5,7 @@ package org.bff.files.formatted.processors;
  * its respective target type.
  */
 @FunctionalInterface
-public interface ReadPreprocessor
+public interface WritePostprocessor
 {
 	String process (final String field, int position);
 }

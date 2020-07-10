@@ -1,7 +1,6 @@
 package org.bff.formatted;
 
-import org.bff.files.formatted.FixedWidthWriter;
-import org.bff.files.formatted.reader.DelimiterSeparatedReader;
+import org.bff.files.formatted.DelimiterSeparatedWriter;
 import org.bff.files.formatted.reader.FixedWidthReader;
 import org.bff.formatted.model.annotations.FormattedDate;
 import org.bff.formatted.model.annotations.FormattedField;
@@ -10,49 +9,55 @@ import lombok.Data;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestBatchReader
 {
 	public static void main (String [] args) throws Exception
 	{
-		List <Transaction> transactions = FixedWidthReader
+		Stream <Transaction> transactions =FixedWidthReader
 			.builder (Transaction.class, new File ("/data/tmp/transfer/CDINFILE_fixed"))
-			.batchSize (2)
-			.preprocessor ((field, position) -> field.trim ())
-			.limit (6)
 			.build ()
-			.readAsList ();
+			.read ();
 
-		transactions.forEach (System.out::println);
+		String out = DelimiterSeparatedWriter
+			.builder (Transaction.class)
+			.separator ('@')
+			.build ()
+			.writeToString (transactions);
+
+		System.out.println (out);
 	}
 }
 
 @Data
 class Transaction
 {
-	@FormattedField (order = 2, textAlignment = FormattedField.Alignment.RIGHT, filler = '0', width = 2)
+	public enum SupportedCurrencies
+	{
+		MXN, USD, EUR
+	}
+
+	@FormattedField (position = 2, rightAligned = true, filler = '0', size = 2)
 	private Long id;
 
-	@FormattedField (order = 1, width = 1)
+	@FormattedField (position = 1, size = 1)
 	private String creditDebitIndicator;
 
-	@FormattedField (order = 3, width = 12, textAlignment = FormattedField.Alignment.RIGHT, filler = '0')
+	@FormattedField (position = 3, size = 12, rightAligned = true, filler = '0')
 	private BigInteger accountNumber;
 
-	@FormattedField (order = 4, width = 12, filler = '*')
+	@FormattedField (position = 4, size = 12, filler = '*', optional = true)
 	private String accountHolder;
 
-	@FormattedField (order = 5, width = 12, textAlignment = FormattedField.Alignment.RIGHT, filler = '0')
+	@FormattedField (position = 5, size = 12, rightAligned = true, filler = '0')
 	private BigInteger reference;
 
 	@FormattedDate ("yyyyMMdd")
-	@FormattedField (order = 6, width = 8)
+	@FormattedField (position = 6, size = 8)
 	private Date valueDate;
 
-	@FormattedField (order = 7, width = 5, filler = '-', textAlignment = FormattedField.Alignment.RIGHT)
-	private String currency;
+	@FormattedField (position = 7, size = 5, filler = '-', rightAligned = true)
+	private SupportedCurrencies currency;
 }

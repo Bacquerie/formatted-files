@@ -5,7 +5,7 @@ package org.bff.files.formatted.processors;
  * the respective object field.
  */
 @FunctionalInterface
-public interface ReadPostprocessor
+public interface WritePreprocessor
 {
 	Object process (final Object field, int position);
 }

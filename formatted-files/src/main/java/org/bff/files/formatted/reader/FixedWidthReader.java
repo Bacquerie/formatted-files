@@ -1,8 +1,5 @@
 package org.bff.files.formatted.reader;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bff.files.BatchedLineIterator;
 import org.bff.files.formatted.processors.ReadPostprocessor;
 import org.bff.files.formatted.processors.ReadPreprocessor;
@@ -13,52 +10,55 @@ import org.bff.formatted.model.annotations.FormattedField;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 public class FixedWidthReader <Type> extends FormattedReader <Type>
 {
-	protected FixedWidthReader (final Builder builder)
+	///region CONSTRUCTORS
+
+	/**
+	 * For use of the internal builder.
+	 */
+	protected FixedWidthReader (final Builder <Type> builder)
 	{
 		super (builder.klass, builder.lineIterator, builder.preprocessor, builder.postprocessor);
 	}
 
+	///endregion
+
+	///region OVERRIDDEN METHODS
+
 	@Override
-	protected Type mapLine (String line)
+	protected String clean (final Field field, final String fieldValue)
 	{
-		try
-		{
-			final Type classInstance = ConstructorUtils.invokeConstructor (klass);
+		FormattedField formatted = FFUtils.getFormattedField (field);
 
-			int start = 0;
-
-			for (Field field : formattedFields)
-			{
-				FormattedField formattedField = FFUtils.getFormattedField (field);
-
-				int end = start + formattedField.width ();
-
-				Object result = FieldParser.parse (
-					this,
-					field,
-					Utils.removeAll (StringUtils.substring (line, start,  end), formattedField.filler (), formattedField.textAlignment () == FormattedField.Alignment.RIGHT)
-				);
-
-				FieldUtils.writeField (field, classInstance, result, true);
-
-				start = end;
-			}
-
-			return classInstance;
-		}
-
-		catch (Exception e)
-		{
-			e.printStackTrace ();
-
-			return null;
-		}
+		return Utils.removeAll (fieldValue, formatted.filler (), formatted.rightAligned ());
 	}
+
+	@Override
+	protected List <String> tokenize (final String line)
+	{
+		final IntStream.Builder builder = IntStream.builder ();
+
+		int start = 0;
+
+		for (Field field : formattedFields)
+		{
+			builder.add (start);
+
+			start += FFUtils.getFormattedField (field).size ();
+		}
+
+		return Arrays.asList (Utils.breakAt (line, builder.add (start).build ()));
+	}
+
+	///endregion
+
+	///region BUILDER
 
 	/**
 	 * Helper method to create a new batched reader that reads lines from a file.
@@ -161,4 +161,6 @@ public class FixedWidthReader <Type> extends FormattedReader <Type>
 			return new FixedWidthReader <Type> (this);
 		}
 	}
+
+	///endregion
 }

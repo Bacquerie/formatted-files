@@ -2,7 +2,6 @@ package org.bff.files;
 
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
-import org.bff.files.utils.Utils;
 
 import java.io.IOException;
 import java.io.Reader;

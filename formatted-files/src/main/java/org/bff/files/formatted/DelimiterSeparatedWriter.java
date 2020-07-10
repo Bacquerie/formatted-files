@@ -1,19 +1,25 @@
 package org.bff.files.formatted;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.bff.files.utils.ParsingUtils;
-import org.bff.files.utils.FFUtils;
-import org.bff.formatted.model.annotations.FormattedField;
+import org.bff.files.formatted.processors.WritePostprocessor;
+import org.bff.files.formatted.processors.WritePreprocessor;
 
+/**
+ * Processes flat-text files with columns separated by delimiters.
+ *
+ * @author Alejandro Bacquerie
+ * @version 0.0.1
+ * @since Java 1.8
+ */
 public class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 {
 	///region FIELDS
 
 	/**
-	 * Character used as field delimiter.
+	 * Character used as field delimiter/separator.
 	 */
 	private final char separator;
 
@@ -26,7 +32,7 @@ public class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 	 */
 	protected DelimiterSeparatedWriter (final Builder <Type> builder)
 	{
-		super (builder.klass);
+		super (builder.klass, builder.preprocessor, builder.postprocessor);
 		
 		this.separator = builder.separator;
 	}
@@ -36,32 +42,14 @@ public class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 	///region OVERRIDDEN METHODS
 
 	@Override
-	protected String mapItem (final Type item)
+	protected String clean (final Field field, final String fieldValue)
 	{
-		final List <String> fields = new ArrayList <> ();
-		
-		formattedFields.forEach (field ->
-		{
-			final FormattedField formattedField = FFUtils.getFormattedField (field);
-			
-			while (fields.size () < (formattedField.order () - 1))
-			{
-				fields.add ("");
-			}
-			
-			try
-			{
-				Object fieldValue = FieldUtils.readField (field, item, true);
+		return fieldValue;
+	}
 
-				fields.add (ParsingUtils.render (field, fieldValue));
-			}
-			
-			catch (Exception e)
-			{
-				e.printStackTrace ();
-			}
-		});
-		
+	@Override
+	protected String join (final List <String> fields)
+	{
 		return String.join (String.valueOf (separator), fields);
 	}
 
@@ -79,16 +67,32 @@ public class DelimiterSeparatedWriter <Type> extends FormattedWriter <Type>
 		private final Class <Type> klass;
 
 		private char separator = ',';
+		private WritePreprocessor preprocessor = (x, i) -> x;
+		private WritePostprocessor postprocessor = (x, i) -> x;
 		
 		private Builder (final Class <Type> klass)
 		{
 			this.klass = klass;
 		}
-		
+
 		public Builder <Type> separator (char separator)
 		{
 			if (separator != '\0') this.separator = separator;
-			
+
+			return this;
+		}
+
+		public Builder <Type> preprocessor (WritePreprocessor preprocessor)
+		{
+			if (!Objects.isNull (preprocessor)) this.preprocessor = preprocessor;
+
+			return this;
+		}
+
+		public Builder <Type> postprocessor (WritePostprocessor postprocessor)
+		{
+			if (!Objects.isNull (postprocessor)) this.postprocessor = postprocessor;
+
 			return this;
 		}
 		

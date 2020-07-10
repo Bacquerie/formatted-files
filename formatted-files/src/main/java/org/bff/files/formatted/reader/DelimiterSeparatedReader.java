@@ -1,18 +1,15 @@
 package org.bff.files.formatted.reader;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bff.files.BatchedLineIterator;
 import org.bff.files.formatted.processors.ReadPostprocessor;
 import org.bff.files.formatted.processors.ReadPreprocessor;
-import org.bff.files.utils.FFUtils;
-import org.bff.formatted.model.annotations.FormattedField;
 
 /**
  * This class helps read delimiter-separated flat text files in batches, mapping them to any
@@ -47,41 +44,11 @@ public class DelimiterSeparatedReader <Type> extends FormattedReader<Type>
 	///endregion
 	
 	///region OVERRIDDEN METHODS
-	
+
 	@Override
-	protected Type mapLine (final String line)
+	protected List <String> tokenize (final String line)
 	{
-		try
-		{
-			final Type classInstance = ConstructorUtils.invokeConstructor (klass);
-
-			final String [] tokens = pattern.split (line);
-			
-			for (Field field : formattedFields)
-			{
-				FormattedField formattedField = FFUtils.getFormattedField (field);
-				
-				if (FFUtils.within (formattedField.order () - 1, 0, tokens.length))
-				{
-					Object result = FieldParser.parse (
-						this,
-						field,
-						tokens [formattedField.order () - 1]
-					);
-					
-					FieldUtils.writeField (field, classInstance, result, true);
-				}
-			}
-			
-			return classInstance;
-		}
-		
-		catch (Exception e)
-		{
-			e.printStackTrace ();
-
-			return null;
-		}
+		return Arrays.asList (pattern.split (line));
 	}
 
 	///endregion
